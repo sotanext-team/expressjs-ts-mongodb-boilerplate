@@ -1,9 +1,13 @@
+import * as dotenv from "dotenv";
+dotenv.config();
+
 import http from "http";
 //=== import internal ===
 import app from "@/app";
 import { app as appConfig, database } from "@/configs";
 import logger from "@/helpers/logger";
 import dbConnect from "@/database";
+import { AddressInfo } from "net";
 
 const port = appConfig.port;
 
@@ -25,12 +29,14 @@ class Server {
     httpServer.listen(port, () => {
       logger.info(
         "Express server listening on http://localhost:" +
-          httpServer.address()?.toString()
+          (httpServer.address() as AddressInfo).port
       );
     });
     httpServer.on("error", this.onError);
     httpServer.on("listening", () => {
-      logger.info("Listening on port: " + httpServer.address()?.toString());
+      logger.info(
+        "Listening on port: " + (httpServer.address() as AddressInfo).port
+      );
     });
   }
 
@@ -45,11 +51,9 @@ class Server {
       case "EACCES":
         logger.error(bind + " requires elevated privileges");
         process.exit(1);
-        break;
       case "EADDRINUSE":
         logger.error(bind + " is already in use");
         process.exit(1);
-        break;
       default:
         throw error;
     }
