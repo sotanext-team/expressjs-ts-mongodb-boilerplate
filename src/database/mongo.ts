@@ -1,9 +1,11 @@
-import { database as dbConfigs, app as appConfigs } from "@/configs";
+import configs from "@/configs";
 import mongoose from "mongoose";
 
-// Database URL
+const dbConfigs = configs.database;
+const appConfigs = configs.app;
 
-const dbURL = `mongodb://${dbConfigs.con.host}:${dbConfigs.con.port}/${dbConfigs.con.database}`;
+// Database URL
+const dbURL = `mongodb://${dbConfigs.con.host}:${dbConfigs.con.port}/${dbConfigs.con.database}?authSource=admin`;
 
 // Import the mongoose module
 const options: mongoose.ConnectOptions = {
@@ -20,6 +22,7 @@ async function connectDB(): Promise<mongoose.Connection> {
   try {
     // Mongoose Debug Mode [set it as `false` in production]
     mongoose.set("debug", appConfigs.mode === "development");
+    mongoose.set("strictQuery", true);
 
     await mongoose.connect(dbURL, options);
     console.log("<<<< Connected to MongoDB >>>>");

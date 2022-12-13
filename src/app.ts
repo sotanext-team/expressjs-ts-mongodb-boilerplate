@@ -6,7 +6,7 @@ import winston from "winston";
 import * as expressWinston from "express-winston";
 import cookieParser from "cookie-parser";
 //=== import internal ===
-import { cors as corsConfig } from "./configs";
+import configs from "./configs";
 import * as modules from "./modules";
 import express from "express";
 
@@ -16,6 +16,7 @@ const ExpressRouter = Express.Router();
 //=== init session ===
 app.use(cookieParser());
 
+const corsConfig = configs.cors;
 app.use(cors(corsConfig));
 
 //=== Parser data request ===
@@ -54,34 +55,34 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-app.use(
-  expressWinston.logger({
-    transports: [
-      new winston.transports.Console({ level: "info" }),
-      new winston.transports.File({
-        level: "info",
-        filename: "./logs/access.log",
-        maxsize: 10 * 1000000,
-        maxFiles: 0,
-        tailable: true,
-      }),
-      new winston.transports.File({
-        level: "error",
-        filename: "./logs/error.log",
-        maxsize: 10 * 1000000,
-        maxFiles: 0,
-        tailable: true,
-      }),
-    ],
-    meta: false,
-    msg: "HTTP {{req.method}} {{req.url}}",
-    expressFormat: true,
-    colorize: true,
-    ignoreRoute: function (req, res) {
-      return false;
-    },
-  })
-);
+// app.use(
+//   expressWinston.logger({
+//     transports: [
+//       new winston.transports.Console({ level: "info" }),
+//       new winston.transports.File({
+//         level: "info",
+//         filename: "./logs/access.log",
+//         maxsize: 10 * 1000000,
+//         maxFiles: 0,
+//         tailable: true,
+//       }),
+//       new winston.transports.File({
+//         level: "error",
+//         filename: "./logs/error.log",
+//         maxsize: 10 * 1000000,
+//         maxFiles: 0,
+//         tailable: true,
+//       }),
+//     ],
+//     meta: false,
+//     msg: "HTTP {{req.method}} {{req.url}}",
+//     expressFormat: true,
+//     colorize: true,
+//     ignoreRoute: function (req, res) {
+//       return false;
+//     },
+//   })
+// );
 
 //=== Init router ===
 for (const key in modules) {
@@ -102,7 +103,9 @@ for (const key in modules) {
 }
 
 app.get("/", function (req, res) {
-  res.sendFile(path.join(process.cwd(), "./doc/index.html"));
+  res.json({
+    message: "Hello world!",
+  });
 });
 
 export default app;

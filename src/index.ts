@@ -4,12 +4,12 @@ dotenv.config();
 import http from "http";
 //=== import internal ===
 import app from "@/app";
-import { app as appConfig, database } from "@/configs";
+import configs from "@/configs";
 import logger from "@/helpers/logger";
 import dbConnect from "@/database";
 import { AddressInfo } from "net";
 
-const port = appConfig.port;
+const port = configs.app.port;
 
 class Server {
   async start() {
